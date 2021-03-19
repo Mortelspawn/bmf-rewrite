@@ -1,9 +1,9 @@
 const { MessageEmbed } = require('discord.js')
-const core = require('./../../core/main.js')
 const prefix = process.env.PREFIX
 
 module.exports = {
     name: 'test',
+    dev: true,
 
     execute: async function(client, msg, args) {
         msg.channel.send({

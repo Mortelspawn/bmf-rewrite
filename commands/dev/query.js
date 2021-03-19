@@ -2,6 +2,7 @@ const testData = require('./../../../BMF-Bot/users/102490915116945408.json')
 
 module.exports = {
     name: 'query',
+    dev: true,
 
     execute: async function(client, msg, args) {
         // let query = args.join(" ").trim()

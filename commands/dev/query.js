@@ -1,5 +1,3 @@
-const testData = require('./../../../BMF-Bot/users/102490915116945408.json')
-
 module.exports = {
     name: 'query',
     dev: true,

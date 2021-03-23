@@ -3,10 +3,9 @@ require('dotenv').config()
 const fs = require('fs')
 const Discord = require('discord.js');
 const client = new Discord.Client();
-
 const postgres = require('postgres')
-client.sql = postgres(process.env.DATABASE_URL, { ssl: { rejectUnauthorized: false } })
 
+client.sql = postgres(process.env.DATABASE_URL, { ssl: { rejectUnauthorized: false } })
 client.commands = new Discord.Collection();
 client.roles = new Discord.Collection();
 client.music = {}
@@ -33,4 +32,5 @@ for (const file of eventFiles) {
 		client.on(event.name, (...args) => event.execute(...args, client));
 	}
 }
+
 client.login(process.env.TOKEN)

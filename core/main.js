@@ -1,7 +1,26 @@
-const { MessageEmbed, ClientUser, ClientApplication, BaseClient, Client, GuildMember, Message } = require('discord.js')
+const { MessageEmbed, Client, GuildMember, Message} = require('discord.js')
 const Nodesu = require('nodesu')
 const osu = new Nodesu.Client(process.env.KEY)
 
+
+/**
+ * Check cooldown
+ * @param {Date} time 
+ * @param {Number} cooldown
+ * @returns {boolean}
+ */
+module.exports.cooldown = (time, cooldown) => {
+    let now = Date.now()
+    if (now - time >= cooldown) return true
+    return false
+}
+
+/**
+ * Checks DB for that user
+ * @param {Client} client 
+ * @param {import('discord.js').Snowflake} id
+ * @returns {(UserDB|null)} User's data
+ */
 module.exports.checkForUser = async function(client, id) {
     let data = await client.sql`
         SELECT * FROM users WHERE discord_id = ${id}
@@ -14,6 +33,12 @@ module.exports.checkForUser = async function(client, id) {
     return data
 }
 
+/**
+ * Insert new user in the DB
+ * @param {Client} client 
+ * @param {JSON} user 
+ * @param {import('discord.js').Snowflake} id
+ */
 module.exports.insertUser = async function(client, user, id) {
 
     const values = {
@@ -21,13 +46,37 @@ module.exports.insertUser = async function(client, user, id) {
         data: JSON.stringify(user, null, 0)
     }
 
-    client.sql`
+    await client.sql`
         INSERT INTO users ${
             client.sql(values, 'discord_id', 'data')
         }
     `
 }
 
+/**
+ * Updates user's data
+ * @param {Client} client 
+ * @param {JSON} user 
+ * @param {import('discord.js').Snowflake} id 
+ */
+module.exports.updateUser = async function(client, user, id) {
+    
+    const values = {
+        data: JSON.stringify(user, null, 0)
+    }
+
+    await client.sql`
+        UPDATE users 
+        SET ${client.sql(values, 'data')}
+        WHERE discord_id = ${id}
+    `
+}
+
+/**
+ * Check if the argument is a correct URL
+ * @param {String} arg 
+ * @returns {Boolean}
+ */
 module.exports.urlCheck = function(arg) {
     let testURL = true
     try {
@@ -39,8 +88,21 @@ module.exports.urlCheck = function(arg) {
     return testURL
 }
 
+/**
+ * @typedef {Object} linkData
+ * @property {(String|null)} linkData.mode
+ * @property {Number} linkData.id
+ */
+
+/**
+ * Checks the link for the mode and returns the id + mode if found
+ * @param {String} link 
+ * @returns {linkData}
+ */
 module.exports.checkLink = function(link) {
-    let result = {}
+    let result = {
+        mode: null
+    }
 
     let modes = ['osu', 'taiko', 'fruits', 'mania']
 
@@ -51,10 +113,15 @@ module.exports.checkLink = function(link) {
     }
     let path = link.pathname
     result.id = path.replace(/[^0-9]/gi, '')
-    return result
+    return {mode: result.mode, id: result.id}
 }
 
-module.exports.awaitMode = async function(msg, embed) {
+/** 
+ * Waits for the user to select his mode with a reaction
+ * @param {Message} msg
+ * @returns {Promise} 
+*/
+module.exports.awaitMode = async function(msg) {
     return new Promise(async (resolve) => {
         let m = await msg.channel.send({
             embed: new MessageEmbed()
@@ -103,6 +170,13 @@ module.exports.awaitMode = async function(msg, embed) {
     })
 }
 
+/**
+ * Get the user's osu! data from the osu! API
+ * @param {Message} msg 
+ * @param {Number} id 
+ * @param {String} mode 
+ * @returns {Object}
+ */
 module.exports.getOsuProfile = async function (msg, id, mode) {
 
     let gamemode = ''
@@ -197,7 +271,8 @@ module.exports.removeRoles = async function(client, gm, roles) {
 module.exports.addCountryRole = async function(client, msg, country) {
     let template = client.roles.get('BEL')
     
-    let infoCh = client.server.channels.cache.find(ch => ch.name = "𝗕𝗼𝘁-𝗜𝗻𝗳𝗼")
+    let infoCh = await client.server.channels.cache.find(ch => ch.id == "716612157219012658")
+    let mod = client.roles.get('Mod')
 
     await msg.guild.roles.create({
         data: {
@@ -212,17 +287,29 @@ module.exports.addCountryRole = async function(client, msg, country) {
         .then((data) => {
             client.roles.set(data.name, data)
             console.log("Created role: " + data.name)
-            infoCh.send(`A new country role was created: ${data}, please make sure it is correctly set up`)
+            infoCh.send({
+                embed: new MessageEmbed()
+                    .setTitle(`New country => ${data.name}`)
+                    .setDescription(`A new country role was created, please make sure it is correctly set up`)
+                    .setColor('GOLD')
+            })
+            infoCh.send(`${mod}`)
         })
         .catch((err) => {
-            let mod = client.roles.get('Mod')
             console.log(`An error has occured when trying to make "${country}" role: ` + err)
-            infoCh(`There was an error when trying to create a new country role (${country}), please make it when you can ${mod}`)
+            infoCh.send({
+                embed: new MessageEmbed()
+                    .setTitle(`Error`)
+                    .setDescription(`There was an error when trying to create a new country role (${country}), please make it when you can.`)
+                    .setColor('RED')
+            })
+            infoCh.send(`${mod}`)
         })
 
 }
 
 /**
+ * Removes role 'New user' and gives new roles
  * @param {Client} client
  * @param {Message} msg
  * @param {Object} roles
@@ -230,7 +317,7 @@ module.exports.addCountryRole = async function(client, msg, country) {
  * @param {String} roles.country
  * @param {String} roles.mode
  * @param {String} roles.verified
- * @param {GuildMember} member
+ * @param {GuildMember} gm
  */
 module.exports.link = async function (client, msg, roles, gm) {
 

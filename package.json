@@ -15,5 +15,8 @@
     "dotenv": "^8.2.0",
     "nodesu": "^0.7.2",
     "postgres": "^1.0.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
   }
 }

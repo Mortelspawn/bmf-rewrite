@@ -328,6 +328,12 @@ module.exports.link = async function (client, msg, roles, gm) {
         await this.removeRoles(client, gm, ['New user'])
     }
 
+    for (i=1; i<50; i++) {
+        if (currentRoles.includes(`#${i}`)) {
+            await this.removeRoles(client, gm, [`#${i}`])
+        }
+    }
+
     let addRoles = [roles.country, `#${roles.country_rank}`, roles.mode, roles.verified]
 
     if (roles.country_rank > 50) {

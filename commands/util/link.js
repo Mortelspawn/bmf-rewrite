@@ -1,5 +1,6 @@
 const core = require('../../core/main.js')
 const getCountryISO3 = require("country-iso-2-to-3");
+const { Client, Message } = require('discord.js');
 
 function capitalize(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
@@ -11,6 +12,13 @@ module.exports = {
     args: true,
     usage: '[profile link]',
 
+    /**
+     * Link command
+     * @param {Client} client 
+     * @param {Message} msg 
+     * @param {Array} args 
+     * @returns 
+     */
     execute: async function(client, msg, args) {
 
         if (await core.checkForUser(client, msg.author.id) != null) return msg.channel.send('You are already linked!')
@@ -32,7 +40,8 @@ module.exports = {
         osu.id = linkArgsCheck.id
 
         let user = await core.getOsuProfile(msg, osu.id, osu.mode)
-
+        if (!user) return
+        
         user.discord = {
             id: msg.author.id,
             username: msg.author.username,

@@ -24,7 +24,7 @@ module.exports = {
             return msg.channel.send(reply);
         }
 
-        if (command.dev && msg.author.id != '716414272715882547') {
+        if (command.dev && msg.author.id != '102490915116945408') {
             return msg.channel.send('Only Mortelspawn_ can use that command')
         }
 

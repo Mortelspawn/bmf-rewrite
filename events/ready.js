@@ -14,7 +14,7 @@ module.exports = {
         client.server = await client.guilds.fetch('716414272715882547', true, true)
         client.server.roles.cache.each(r => addRole(client, r.name))
 
-        client.user.setActivity(`Use ${prefix}help`, {type: 'PLAYING'})
+        client.user.setActivity(`Use !!help`, {type: 'PLAYING'})
         let myself = await client.users.fetch("102490915116945408", true, true)
         myself.createDM()
             .then((dm) => {

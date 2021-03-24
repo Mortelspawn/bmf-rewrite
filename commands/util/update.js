@@ -21,7 +21,7 @@ module.exports = {
         let userData = await core.getOsuProfile(msg, user.data.player.user_id, user.data.player.mode)
         if (!userData) return
 
-        user.data.player = userData
+        user.data.player = userData.player
 
         /** @type {GuildMember} */
         let member = ''
@@ -39,26 +39,27 @@ module.exports = {
             }
         }
 
-        let sending = msg.channel.send('Updating ...')
-        try {
-            await core.removeRoles(client, member, remove)
-            await core.giveRoles(client, member, [`#${userData.player.pp_country_rank}`])
-            await core.updateUser(client, user, msg.author.id)
-            sending.delete()
-            msg.channel.send({
-                embed: new MessageEmbed()
-                    .setDescription('Update successful')
-                    .setColor('GREEN')
+        msg.channel.send('Updating ...')
+            .then(async (sent) => {
+                try {
+                    await core.removeRoles(client, member, remove)
+                    await core.giveRoles(client, member, [`#${userData.player.pp_country_rank}`])
+                    await core.updateUser(client, user, msg.author.id)
+                    sent.delete()
+                    msg.channel.send({
+                        embed: new MessageEmbed()
+                            .setDescription('Update successful')
+                            .setColor('GREEN')
+                    })
+                } catch (err) {
+                    console.log(err)
+                    sent.delete()
+                    msg.channel.send({
+                        embed: new MessageEmbed()
+                            .setDescription('An error has occured, blame Mortelspawn_')
+                            .setColor('RED')
+                    })
+                }
             })
-        } catch (err) {
-            console.log(err)
-            sending.delete()
-            msg.channel.send({
-                embed: new MessageEmbed()
-                    .setDescription('An error has occured, blame Mortelspawn_')
-                    .setColor('RED')
-            })
-        }
-
     }
 }

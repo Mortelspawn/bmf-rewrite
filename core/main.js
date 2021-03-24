@@ -62,7 +62,7 @@ module.exports.insertUser = async function(client, user, id) {
 module.exports.updateUser = async function(client, user, id) {
     
     const values = {
-        data: JSON.stringify(user, null, 0)
+        data: JSON.stringify(user.data, null, 0)
     }
 
     await client.sql`

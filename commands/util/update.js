@@ -3,7 +3,7 @@ const core = require('./../../core/main.js')
 
 function msToHMS(ms) {
     let d = new Date(ms)
-    return `${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`
+    return `${d.getUTCHours()}:${d.getUTCMinutes()}:${d.getUTCSeconds()} UTC+0`
 }
 
 module.exports = {

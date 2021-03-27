@@ -21,6 +21,7 @@ module.exports = {
         let user = await core.checkForUser(client, msg.author.id)
 
         if (user == null) return msg.channel.send('You have to be linked first to use "update", ' + `do \`${process.env.PREFIX}link [profile]\``)
+        if (user.data.outsider) return msg.channel.send("Can't update data since you are not linked with an osu! profile, ask Mortelspawn_ if you want to change")
         if (!core.cooldown(user.data.player.last_update, 86400000)) return msg.channel.send('You can only use update every 24h, last update was at ' + msToHMS(user.data.player.last_update))
 
         let userData = await core.getOsuProfile(msg, user.data.player.user_id, user.data.player.mode)

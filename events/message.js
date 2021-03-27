@@ -24,9 +24,15 @@ module.exports = {
             return msg.channel.send(reply);
         }
 
-        if (command.dev && msg.author.id != '102490915116945408') {
-            return msg.channel.send('Only Mortelspawn_ can use that command')
+        if (command.dev) {
+            switch (msg.author.id) {
+                case '102490915116945408':
+                case '717016159945228288':
+                    break;
+                default: return msg.channel.send('Only Mortelspawn_ can use that command')
+            }
         }
+
 
         // msg.channel.startTyping()
 

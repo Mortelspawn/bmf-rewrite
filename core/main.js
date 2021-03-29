@@ -343,8 +343,11 @@ module.exports.link = async function (client, msg, roles, gm) {
     if (!client.roles.get(roles.country)) {
         await this.addCountryRole(client, msg, roles.country)
     }
+    console.log("After country")
 
     await this.giveRoles(client, gm, addRoles)
+    
+    console.log("After giveroles")
     msg.channel.send({
         embed: new MessageEmbed()
             .setDescription('You are now linked and verified, enjoy your stay!')

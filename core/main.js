@@ -320,25 +320,29 @@ module.exports.addCountryRole = async function(client, msg, country) {
  * @param {GuildMember} gm
  */
 module.exports.link = async function (client, msg, roles, gm) {
-
+    console.log("Start of linking function")
     let currentRoles = []
     gm.roles.cache.each(r => currentRoles.push(r.name))
+    console.log("After caching member's roles")
 
     if (currentRoles.includes('New user')) {
         await this.removeRoles(client, gm, ['New user'])
     }
+    console.log("After remove new user")
 
     for (i=1; i<50; i++) {
         if (currentRoles.includes(`#${i}`)) {
             await this.removeRoles(client, gm, [`#${i}`])
         }
     }
+    console.log("After remove country rank")
 
     let addRoles = [roles.country, `#${roles.country_rank}`, roles.mode, roles.verified]
 
     if (roles.country_rank > 50) {
         addRoles.splice(1, 1)
     }
+    console.log("After removing country rank if not in top 50")
 
     if (!client.roles.get(roles.country)) {
         await this.addCountryRole(client, msg, roles.country)
@@ -353,4 +357,5 @@ module.exports.link = async function (client, msg, roles, gm) {
             .setDescription('You are now linked and verified, enjoy your stay!')
             .setColor('GREEN')
     })
+    console.log("END of link")
 }

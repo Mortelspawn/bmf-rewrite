@@ -63,6 +63,7 @@ module.exports = {
         } else {
             member = msg.member
         }
+        console.log(member)
         
         core.link(client, msg, roles, member)
         core.insertUser(client, user, msg.author.id)

@@ -3,7 +3,7 @@ const prefix = process.env.PREFIX
 
 module.exports = {
     name: 'guildMemberAdd',
-
+    
     execute: async function (member) {
 
         let defaultCh = member.guild.channels.cache.find(ch => ch.name === "𝗚𝗲𝗻𝗲𝗿𝗮𝗹") // "𝗚𝗲𝗻𝗲𝗿𝗮𝗹" "test-bmf-bot-spam"
@@ -12,7 +12,7 @@ module.exports = {
 
                 await dm.send({
                     embed: new MessageEmbed()
-                        .setTitle(`Welcome ${msg.author.username} !\n\u200B`)
+                        .setTitle(`Welcome ${member.user.username} !\n\u200B`)
                         .setDescription(' - In order to get verified and get access the the rest of the server, please choose one of the following options: \n\u200B')
                         .addField(
                             "1. Link with your osu! profile\n\u200B",

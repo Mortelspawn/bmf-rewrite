@@ -6,7 +6,7 @@ module.exports = {
     
     execute: async function (member) {
 
-        let defaultCh = member.guild.channels.cache.find(ch => ch.name === "𝗚𝗲𝗻𝗲𝗿𝗮𝗹") // "𝗚𝗲𝗻𝗲𝗿𝗮𝗹" "test-bmf-bot-spam"
+        let defaultCh = member.guild.channels.cache.find(ch => ch.name === "general") // "𝗚𝗲𝗻𝗲𝗿𝗮𝗹" "test-bmf-bot-spam"
         member.createDM()
             .then(async (dm) => {
 

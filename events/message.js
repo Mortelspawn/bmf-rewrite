@@ -1,7 +1,16 @@
+const { Message, Client } = require("discord.js");
+
 const prefix = process.env.PREFIX
 
 module.exports = {
     name: 'message',
+
+    /**
+     * 
+     * @param {Message} msg 
+     * @param {Client} client 
+     * @returns 
+     */
     execute: async function(msg, client) {
         
         if (!msg.content.startsWith(prefix) || msg.author.bot) return;
